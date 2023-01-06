@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 
-import { Tower } from "../components";
+import { Tower, TowerControlWrapper } from "../components";
 import { useTowers } from "../hooks";
 
 const defaultInitData = [[1, 2, 3, 4, 5], [], []];
 
 export const Towers: React.FC<{ initData?: number[][] }> = ({ initData }) => {
   const data = !!initData ? initData : defaultInitData;
-  // const { selectTowerByKey, selectedTowersKeys, towers } = useTowers(data);
+
   const onError = (e: { messages: string[] }) => setErrorMessages(e.messages);
   const onValid = () => setErrorMessages([]);
 
@@ -26,21 +26,13 @@ export const Towers: React.FC<{ initData?: number[][] }> = ({ initData }) => {
       </div>
       <div style={{ display: "flex", position: "relative" }}>
         {towers.data.map((tower, j) => (
-          <div
+          <TowerControlWrapper
             key={j}
             onClick={() => towers.selectTowerByKey(j)}
-            style={{
-              cursor: "pointer",
-              border:
-                towers.selectedKeys[0] === j
-                  ? "2px solid blue"
-                  : "1px dashed blue",
-              minWidth: "100px",
-              margin: "10px",
-            }}
+            selected={towers.selectedKeys[0] === j}
           >
             <Tower data={tower} />
-          </div>
+          </TowerControlWrapper>
         ))}
         <button onClick={() => towers.clearSelectedKeys()}>clear</button>
       </div>
