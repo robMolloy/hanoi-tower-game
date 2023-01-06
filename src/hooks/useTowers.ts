@@ -3,18 +3,18 @@ import { useEffect, useState } from "react";
 type TTowers = number[][];
 type TSelectedKeys = [] | [number] | [number, number];
 
-export const useTowers = ({
-  data: initTowersState,
-  onError,
-  onValid,
-}: {
-  data: TTowers;
-  onError: (e: { messages: string[] }) => void;
-  onValid: () => void;
-}) => {
+const errorMessagesMap = {
+  isNoDisk: "error: there are no disks to move from this tower",
+  isDiskTooBig: "error: disk is too big to move to that tower",
+};
+
+export const useTowers = ({ data: initTowersState }: { data: TTowers }) => {
   const [towersState, setTowersState] = useState(initTowersState);
+
   const [selectedKeys, setSelectedKeys] = useState<TSelectedKeys>([]);
   const clearSelectedKeys = () => setSelectedKeys([]);
+
+  const [errorMessagesState, setErrorMessagesState] = useState<string[]>([]);
 
   const selectTowerByKey = (i: number) => {
     if (selectedKeys.length === 0) setSelectedKeys([i]);
@@ -32,20 +32,16 @@ export const useTowers = ({
         const isDiskTooBig = moveableDisk > newTower[0];
         const isImmoveable = isNoDisk || isDiskTooBig;
 
+        const errorMessages = [];
         if (!isImmoveable) {
           towers[x] = otherDisks;
           towers[y] = [moveableDisk, ...towers[y]];
-          onValid();
         } else {
-          const messages = [];
-          if (isNoDisk)
-            messages.push("error: there are no disks to move from this tower");
-          if (isDiskTooBig)
-            messages.push("error: disk is too big to move to that tower");
-
-          onError({ messages });
+          if (isNoDisk) errorMessages.push(errorMessagesMap.isNoDisk);
+          if (isDiskTooBig) errorMessages.push(errorMessagesMap.isDiskTooBig);
         }
 
+        setErrorMessagesState(errorMessages);
         setTowersState([...towers]);
       },
     }),
@@ -67,5 +63,6 @@ export const useTowers = ({
     selectedKeys,
     clearSelectedKeys,
     data: towersState,
+    errors: errorMessagesState,
   };
 };
