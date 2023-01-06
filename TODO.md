@@ -1,0 +1,7 @@
+- make a dumb react "Tower" component
+  - accepts any array of numbers and renders to the page e.g;
+    - [1,2,3,4,5] // valid
+    - [5,1,2,3,4] // invalid
+    - but both render successfully without error
+- Optional: "ValidTower" component
+- Logic
